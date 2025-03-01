@@ -33,6 +33,17 @@ class User(Base):
     balance = Column(Float, nullable=False)
     earned = Column(Float, nullable=False)
     verify_timestamp = Column(TIMESTAMP)
+    last_click_timestamp = Column(
+        TIMESTAMP, server_default=text("'2001-01-01 01:00:00'")
+    )
+    boost_timestamp = Column(
+        TIMESTAMP, server_default=text("'2001-01-01 01:00:00'")
+    )
+
+    subscriptions = relationship(
+        "Subscription", back_populates="user"
+    )  # Исправлено
+
     # Связь многие-ко-многим через таблицу user_task
     tasks = relationship(
         "Task",

@@ -1,44 +1,46 @@
-from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery
-from dishka.integrations.aiogram import FromDishka, inject
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram import Router, F, Bot
+from aiogram.types import CallbackQuery
+from dishka.integrations.aiogram import FromDishka, inject
 
-from tgbot.application import UserGateway, TaskGateway, UserTaskGateway
-from tgbot.presentation.shit import (
-    check_with_answer,
-)
-from tgbot.presentation.shit import (
-    check_subscription,
-    check_with_answer_for_callbacks,
-)
-from tgbot.presentation.keyboards import (
-    get_subscribe_task_keyboard,
+from tgbot.presentation.v2.keyboards import (
     get_main_keyboard,
+    get_subscribe_task_keyboard,
     TaskCallback,
 )
-
+from tgbot.presentation.v2.subscribe_check import (
+    check_with_answer,
+    check_subscription,
+)
+from tgbot.application import UserGateway, TaskGateway, UserTaskGateway
 
 tasks_router = Router()
 
 
-@tasks_router.message(F.text == "Задания 📚")
+@tasks_router.callback_query(F.data == "tasks")
 @inject
-async def tasks(message: Message, session: FromDishka[AsyncSession], bot: Bot):
-    if not await check_with_answer(bot=bot, message=message, session=session):
+async def get_faq(
+    callback: CallbackQuery, session: FromDishka[AsyncSession], bot: Bot
+):
+    if not await check_with_answer(
+        bot=bot,
+        message=callback.message,
+        user_tg_id=callback.from_user.id,
+        session=session,
+    ):
         return
 
     user_gateway = UserGateway(session)
-    user = await user_gateway.by_tg_id(message.from_user.id)
+    user = await user_gateway.by_tg_id(callback.from_user.id)
     tasks = await user_gateway.tasks_for_user(user.id)
+    
     if tasks:
-        await message.answer(
+        await callback.message.edit_text(
             f"Подпишись на канал споносора и получи награду - {tasks[0].reward}",
             reply_markup=get_subscribe_task_keyboard(tasks[0]),
         )
     else:
-        await message.answer(
-            "Актуальных заданий нет", reply_markup=get_main_keyboard()
-        )
+        await callback.answer("Актуальных заданий нет", show_alert=True)
 
 
 @tasks_router.callback_query(TaskCallback.filter())
@@ -49,7 +51,7 @@ async def my_callback_foo(
     session: FromDishka[AsyncSession],
     callback_data: TaskCallback,
 ):
-    if not await check_with_answer_for_callbacks(
+    if not await check_with_answer(
         bot=bot,
         message=callback.message,
         session=session,
@@ -91,8 +93,9 @@ async def my_callback_foo(
                 text=f"Подпишись на канал споносора и получи награду - {task[0].reward}",
             )
         else:
-            await callback.answer(
-                "Актуальных заданий нет", reply_markup=get_main_keyboard()
+            await callback.answer("Актуальных заданий нет", show_alert=True)
+            await callback.message.edit_text(
+                "Главное меню", reply_markup=get_main_keyboard()
             )
 
     else:

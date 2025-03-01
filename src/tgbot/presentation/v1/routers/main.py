@@ -4,12 +4,12 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 from dishka.integrations.aiogram import inject, FromDishka
 
-from tgbot.presentation.keyboards import (
+from tgbot.presentation.v1.keyboards import (
     get_reviews_keyboard,
     get_main_keyboard,
 )
 from tgbot.application import MetadataGateway
-from tgbot.presentation.shit import (
+from tgbot.presentation.v1.shit import (
     check_with_answer,
 )
 

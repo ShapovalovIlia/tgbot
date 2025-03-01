@@ -7,7 +7,7 @@ from aiogram.types import Message
 from aiogram.enums import ChatMemberStatus
 
 from tgbot.application import Sponsor, User
-from tgbot.presentation.keyboards import get_initial_keyboard
+from tgbot.presentation.v1.keyboards import get_initial_keyboard
 
 
 async def check_with_answer(

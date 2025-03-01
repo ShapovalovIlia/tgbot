@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dishka.integrations.aiogram import FromDishka, inject
 
 from tgbot.application import Metadata
-from tgbot.presentation.shit import check_with_answer
+from tgbot.presentation.v1.shit import check_with_answer
 
 withdraw_router = Router()
 

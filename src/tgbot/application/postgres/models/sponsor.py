@@ -1,6 +1,6 @@
 from .base import Base
-
 from sqlalchemy import Column, UUID, text, String
+from sqlalchemy.orm import relationship
 
 
 class Sponsor(Base):
@@ -13,3 +13,5 @@ class Sponsor(Base):
     )
     tg_id = Column(String, nullable=False, unique=True)
     link = Column(String, nullable=False, unique=True)
+
+    subscriptions = relationship("Subscription", back_populates="sponsor")

@@ -5,13 +5,16 @@ from aiogram import Bot, Dispatcher
 from dishka.integrations.aiogram import setup_dishka
 
 from tgbot.infrastructure import ioc_container_factory
-from tgbot.presentation.routers import (
+from tgbot.presentation.v2 import (
     start_router,
+    farm_stars_router,
     main_router,
+    get_link_router,
+    reviews_router,
+    faq_router,
+    boost_router,
     profile_router,
-    rating_router,
-    withdraw_router,
-    gain_stars_router,
+    mini_games_router,
     tasks_router,
 )
 
@@ -21,11 +24,14 @@ async def main():
     dp = Dispatcher()
 
     dp.include_router(start_router)
+    dp.include_router(farm_stars_router)
     dp.include_router(main_router)
+    dp.include_router(get_link_router)
+    dp.include_router(reviews_router)
+    dp.include_router(faq_router)
+    dp.include_router(boost_router)
     dp.include_router(profile_router)
-    dp.include_router(rating_router)
-    dp.include_router(withdraw_router)
-    dp.include_router(gain_stars_router)
+    dp.include_router(mini_games_router)
     dp.include_router(tasks_router)
 
     container = ioc_container_factory()

@@ -4,8 +4,11 @@ from dishka.integrations.aiogram import FromDishka, inject
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tgbot.application import UserGateway
-from tgbot.presentation.keyboards import get_main_keyboard, get_rating_keyboard
-from tgbot.presentation.shit import (
+from tgbot.presentation.v1.keyboards import (
+    get_main_keyboard,
+    get_rating_keyboard,
+)
+from tgbot.presentation.v1.shit import (
     check_with_answer,
     check_with_answer_for_callbacks,
 )

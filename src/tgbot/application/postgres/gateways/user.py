@@ -36,7 +36,7 @@ class UserGateway:
 
         return users
 
-    async def top_referrals_last_day(self) -> Sequence[User]:
+    async def top_referrals_last_day(self, amount: int) -> Sequence[User]:
         last_24_hours = datetime.now() - timedelta(
             days=1
         )  # UTC-время за последние 24 часа
@@ -69,7 +69,7 @@ class UserGateway:
                 .order_by(
                     func.count(referral.id).desc()
                 )  # Сортируем по количеству новых рефералов
-                .limit(10)  # Берём топ-10
+                .limit(amount)
             )
         ).all()
 

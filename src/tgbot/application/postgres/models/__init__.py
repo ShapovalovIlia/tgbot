@@ -6,7 +6,8 @@ __all__ = [
     "Metadata",
     "Task",
     "user_task_table",
-    "withdrawl_requests"
+    "withdrawl_requests",
+    "Subscription",
 ]
 
 from .base import Base
@@ -17,3 +18,4 @@ from .sponsor import Sponsor
 from .task import Task
 from .user_task import user_task_table
 from .withdrawal import withdrawl_requests
+from .subscription import Subscription

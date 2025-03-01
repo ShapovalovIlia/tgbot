@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dishka.integrations.aiogram import FromDishka, inject
 
 from tgbot.application import UserGateway, MetadataGateway
-from tgbot.presentation.keyboards import (
+from tgbot.presentation.v1.keyboards import (
     get_gain_stars_keyboard,
     get_daily_bonus_keyboard,
 )
-from tgbot.presentation.shit import (
+from tgbot.presentation.v1.shit import (
     check_with_answer,
     check_with_answer_for_callbacks,
 )

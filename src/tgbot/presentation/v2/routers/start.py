@@ -9,13 +9,12 @@ from aiogram import Router, Bot, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, CommandObject
 
-from tgbot.presentation.keyboards import (
+from tgbot.presentation.v2.keyboards import (
     get_main_keyboard,
     get_initial_keyboard,
 )
-from tgbot.presentation.shit import (
-    check_with_answer_for_callbacks,
-    send_notification,
+from tgbot.presentation.v2.subscribe_check import (
+    check_with_answer,
 )
 from tgbot.application import User, UserGateway, SponsorGateway
 
@@ -54,7 +53,11 @@ async def start_handler(
         await session.commit()
 
     await message.answer(
-        text="Вам необходимо подписаться на каналы спонсоров, чтобы пользоваться ботом.",
+        text="""
+        Привет, чтобы активировать бота и начать получать ⭐️ звезды за друзей:
+1️⃣ Подпишись на наших спонсоров (это займет 5 секунд).
+2️⃣ Нажми "Проверить подписку ✅
+        """,
         reply_markup=get_initial_keyboard(sponsors),
     )
 
@@ -64,13 +67,14 @@ async def start_handler(
 async def check_user_subscription_callback_answer(
     callback: CallbackQuery, bot: Bot, session: FromDishka[AsyncSession]
 ):
-    if not await check_with_answer_for_callbacks(
+    if not await check_with_answer(
         bot=bot,
         message=callback.message,
         session=session,
         user_tg_id=callback.from_user.id,
     ):
         return
+
     user_tg_id = callback.from_user.id
     user_gateway = UserGateway(session)
     user = await user_gateway.by_tg_id(user_tg_id)
@@ -85,25 +89,19 @@ async def check_user_subscription_callback_answer(
                 referrer.balance += 2.5
                 referrer.earned += 2.5
                 referrer.amount_of_referrals += 1
-                await send_notification(
-                    chat_id=referrer.tg_id,
-                    message=f"По вашей реферальной ссылке зарегестрирован пользователь, вам начислена награда в размере 2.5 ✨",
-                    bot=bot,
-                )
+                # await send_notification(
+                #     chat_id=referrer.tg_id,
+                #     message=f"По вашей реферальной ссылке зарегестрирован пользователь, вам начислена награда в размере 2.5 ✨",
+                #     bot=bot,
+                # )
 
         await session.commit()
 
-    await callback.message.answer(
-        "✅ Вы подписаны на все каналы!", reply_markup=get_main_keyboard()
+    await callback.answer("✅ Вы подписаны на все каналы!", show_alert=True)
+
+    await callback.message.edit_text(
+        text=f"""
+        главное меню
+        """,
+        reply_markup=get_main_keyboard(),
     )
-
-
-# @start_router.message()
-# async def handle_forwarded_message(message: Message):
-#     if message.forward_from_chat:
-#         chat = message.forward_from_chat
-#         tg_id = chat.id
-#         chat_title = chat.title
-#         await message.reply(f"ID канала: `{tg_id}`\nНазвание канала: `{chat_title}`", parse_mode="Markdown")
-#     else:
-#         await message.reply("Пожалуйста, пересылайте сообщения из канала.")
